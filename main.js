@@ -1,6 +1,3 @@
-/**
- * Main Javascript logic for fetching data from NewsAPI and populating the UI
- */
 
 const API_KEY = 'd5994425403242b88ae9932b6f516057';
 const BASE_URL = 'https://newsapi.org/v2/everything';
