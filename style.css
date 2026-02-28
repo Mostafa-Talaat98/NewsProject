@@ -1,0 +1,321 @@
+/* 
+ * Premium News Website Styling
+ * Enhancing Bootstrap 5 with modern aesthetics, animations, and color schemes.
+ */
+
+:root {
+    --primary-color: #0b2545;
+    --secondary-color: #13315c;
+    --accent-color: #1a659e;
+    --highlight: #ff6b35;
+    --text-dark: #2b2d42;
+    --bg-light: #f8f9fa;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+}
+
+/* Ad Header */
+.ad-header .ad-banner {
+    background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.ad-header .ad-banner:hover {
+    transform: translateY(-2px);
+}
+
+/* Navbar */
+.custom-navbar {
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color)) !important;
+    padding: 1rem 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.custom-navbar .navbar-brand {
+    letter-spacing: -0.5px;
+    background: linear-gradient(120deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.custom-navbar .nav-link {
+    position: relative;
+    padding: 0.5rem 1rem !important;
+    transition: color 0.3s ease;
+}
+
+.custom-navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.custom-navbar .nav-link:hover::after,
+.custom-navbar .nav-link.active::after {
+    width: 80%;
+}
+
+/* Section Title */
+.section-title {
+    position: relative;
+    color: var(--primary-color);
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 50px;
+    height: 3px;
+    background-color: var(--highlight);
+    border-radius: 2px;
+}
+
+/* News Cards Customization */
+.news-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.news-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.news-card img {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.news-card:hover img {
+    transform: scale(1.05);
+}
+
+.news-card .card-body {
+    padding: 1.5rem;
+}
+
+.news-card .card-title {
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+}
+
+.news-card .card-text {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Aside Widgets */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+}
+
+.widget-title {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.widget-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: padding-left 0.3s ease;
+}
+
+.widget-item:last-child {
+    border-bottom: none;
+}
+
+.widget-item:hover {
+    padding-left: 8px;
+}
+
+.widget-item a {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: block;
+}
+
+.widget-item a:hover {
+    color: var(--accent-color);
+}
+
+.widget-item small {
+    color: #888;
+    font-size: 0.8rem;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+/* Horizontal Widget Cards Styling */
+.matches-widget-card {
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+.matches-widget-card:hover {
+    transform: translateY(-4px) scale(1.01) !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+    background-color: #ffffff !important;
+    cursor: pointer;
+}
+
+.matches-widget-card img {
+    transition: transform 0.5s ease;
+}
+
+.matches-widget-card:hover img {
+    transform: scale(1.08);
+    /* Zoom effect on hover */
+}
+
+.matches-widget-card a {
+    transition: color 0.3s ease;
+}
+
+.matches-widget-card:hover a {
+    color: var(--highlight) !important;
+}
+
+/* Auto-Scroll Animation Settings */
+.news-scroll-container {
+    height: 450px;
+    /* Set a fixed height for vertical scrolling */
+    overflow: hidden;
+    position: relative;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Add mask for a fade-out effect at top/bottom edges */
+.news-scroll-container::before,
+.news-scroll-container::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.news-scroll-container::before {
+    top: 0;
+    background: linear-gradient(to bottom, #ffffff, transparent);
+}
+
+.news-scroll-container::after {
+    bottom: 0;
+    background: linear-gradient(to top, #ffffff, transparent);
+}
+
+.scrolling-news-wrapper {
+    display: flex;
+    flex-direction: column;
+    animation: scrollVertical 20s linear infinite;
+}
+
+/* Pause animation smoothly on hover */
+.news-scroll-container:hover .scrolling-news-wrapper {
+    animation-play-state: paused;
+}
+
+@keyframes scrollVertical {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-50%);
+    }
+}
+
+/* Live Matches Widget Styling */
+.live-match-card {
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: #fafafa;
+    transition: all 0.2s ease;
+}
+
+.live-match-card:hover {
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #dee2e6;
+}
+
+.match-team {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+}
+
+.match-score {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--highlight);
+    background-color: rgba(255, 107, 53, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.match-time {
+    font-size: 0.75rem;
+    color: #ef233c;
+    font-weight: bold;
+    animation: blink 2s infinite;
+}
+
+.match-league {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
+    text-align: center;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
