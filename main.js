@@ -1,7 +1,7 @@
 
 const API_KEY = '150dda084c057317b24360129faaa015';
 const BASE_URL = 'https://gnews.io/api/v4/search';
-const FROM_DATE = '2026-01-23'; 
+const FROM_DATE = '2026-01-23';
 
 const appId = '67135364eafe4c4ea3203fec426290df';
 const url = `https://openexchangerates.org/api/latest.json?app_id=${appId}&symbols=AUD,GBP,EUR,CAD,USD,EGP`;
@@ -17,46 +17,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-async function fetchNewsData() {
+async function fetchNewsCategory(url, containerId, isWidget = false) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '<div class="text-center text-muted p-3">Loading news...</div>';
+
     try {
-        // Fetch 4 New Main Sections (Breaking, Politics, Accidents, World)
-        // 1. Breaking News
-        const breakRes = await fetch(`${BASE_URL}?q="breaking news"&lang=en&max=3&apikey=${API_KEY}`);
-        const breakData = await breakRes.json();
-        renderMainNews('breaking-news-container', breakData.articles);
-
-        // 2. Politics
-        const polRes = await fetch(`${BASE_URL}?q=politics&lang=en&max=3&apikey=${API_KEY}`);
-        const polData = await polRes.json();
-        renderMainNews('politics-news-container', polData.articles);
-
-        // 3. Accidents
-        const accRes = await fetch(`${BASE_URL}?q=accidents&lang=en&max=3&apikey=${API_KEY}`);
-        const accData = await accRes.json();
-        renderMainNews('accidents-news-container', accData.articles);
-
-        // 4. World News
-        const worldRes = await fetch(`${BASE_URL}?q=world&lang=en&max=3&apikey=${API_KEY}`);
-        const worldData = await worldRes.json();
-        renderMainNews('world-news-container', worldData.articles);
-
-        // Fetch Money Alerts (Exchange Rates)
-        fetchMoneyAlerts();
-
-        // Fetch Matches/Sports News
-        const matchesRes = await fetch(`${BASE_URL}?q=match+OR+football+OR+sports&lang=en&max=4&apikey=${API_KEY}`);
-        const matchesData = await matchesRes.json();
-
-        if (matchesData && matchesData.articles) {
-            renderHorizontalWidget('matches-news-list', matchesData.articles);
-        } else {
-            console.error("News API returned error or no articles");
-            document.getElementById('matches-news-list').innerHTML = '<li class="widget-item">Sports news unavailable.</li>';
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
         }
+        const data = await res.json();
 
+        if (isWidget) {
+            if (data && data.articles && data.articles.length > 0) {
+                renderHorizontalWidget(containerId, data.articles);
+            } else {
+                container.innerHTML = '<li class="widget-item">News unavailable or limit reached.</li>';
+            }
+        } else {
+            if (data && data.articles && data.articles.length > 0) {
+                renderMainNews(containerId, data.articles);
+            } else {
+                container.innerHTML = '<p class="text-center w-100 py-3">No news available or limit reached.</p>';
+            }
+        }
     } catch (error) {
-        console.error("Error fetching news from API:", error);
+        console.error(`Error fetching news for ${containerId}:`, error);
+        if (isWidget) {
+            container.innerHTML = '<li class="widget-item text-danger">Error loading news.</li>';
+        } else {
+            container.innerHTML = '<p class="text-center w-100 py-3 text-danger">Error loading news. Please check your API limits.</p>';
+        }
     }
+}
+
+async function fetchNewsData() {
+    // Fetch sections independently so one failure doesn't break the rest
+    Promise.allSettled([
+        fetchNewsCategory(`${BASE_URL}?q="breaking news"&lang=en&max=3&apikey=${API_KEY}`, 'breaking-news-container'),
+        fetchNewsCategory(`${BASE_URL}?q=politics&lang=en&max=3&apikey=${API_KEY}`, 'politics-news-container'),
+        fetchNewsCategory(`${BASE_URL}?q=accidents&lang=en&max=3&apikey=${API_KEY}`, 'accidents-news-container'),
+        fetchNewsCategory(`${BASE_URL}?q=world&lang=en&max=3&apikey=${API_KEY}`, 'world-news-container'),
+        fetchNewsCategory(`${BASE_URL}?q=match+OR+football+OR+sports&lang=en&max=4&apikey=${API_KEY}`, 'matches-news-list', true)
+    ]);
+
+    // Fetch Money Alerts
+    fetchMoneyAlerts();
 }
 
 async function fetchMoneyAlerts() {
@@ -84,13 +91,13 @@ async function fetchMoneyAlerts() {
                 'USD': '🇺🇸'
             };
 
-            const egpRateToUsd = data.rates.EGP; 
+            const egpRateToUsd = data.rates.EGP;
 
             const targetSymbols = ['AUD', 'GBP', 'EUR', 'CAD', 'USD'];
 
             targetSymbols.forEach(currency => {
                 const flag = flags[currency] || '💸';
-                const rateToUsd = data.rates[currency]; 
+                const rateToUsd = data.rates[currency];
 
                 // Cross rate calculation: 1 Target Currency = (1 / rateToUsd) * egpRateToUsd EGP
                 // Math: 1 USD = rateToUsd currency = egpRateToUsd EGP
