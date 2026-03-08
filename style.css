@@ -319,3 +319,112 @@ body {
         opacity: 1;
     }
 }
+
+/* --- Matches Page Styles --- */
+.league-section {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.league-title {
+    border-bottom: 2px solid #0d6efd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.match-row {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.match-row:last-child {
+    border-bottom: none;
+}
+
+.match-row:hover {
+    background-color: #f8f9fa;
+}
+
+.team-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.score-box {
+    background-color: #0d6efd;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    min-width: 80px;
+    text-align: center;
+}
+
+.match-status {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-live {
+    color: #dc3545;
+}
+
+/* --- Authentication Pages --- */
+.auth-bg {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.auth-card {
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.auth-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12) !important;
+}
+
+.google-btn {
+    border: 1px solid #ddd !important;
+    background-color: white;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.google-btn:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(26, 101, 158, 0.25);
+}
+
+.auth-submit-btn {
+    transition: all 0.3s ease;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    border: none;
+}
+
+.auth-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(26, 101, 158, 0.3) !important;
+}
+
+.nav-register-btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.4);
+}

@@ -1,43 +1,50 @@
 
-const API_KEY = 'd5994425403242b88ae9932b6f516057';
-const BASE_URL = 'https://newsapi.org/v2/everything';
-const FROM_DATE = '2026-01-23'; // User's requested date
+const API_KEY = '150dda084c057317b24360129faaa015';
+const BASE_URL = 'https://gnews.io/api/v4/search';
+const FROM_DATE = '2026-01-23'; 
+
+const appId = '67135364eafe4c4ea3203fec426290df';
+const url = `https://openexchangerates.org/api/latest.json?app_id=${appId}&symbols=AUD,GBP,EUR,CAD,USD,EGP`;
+
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchNewsData();
     fetchLiveMatches();
 });
 
+
+
 async function fetchNewsData() {
     try {
         // Fetch 4 New Main Sections (Breaking, Politics, Accidents, World)
         // 1. Breaking News
-        const breakRes = await fetch(`${BASE_URL}?q="breaking news"&sortBy=publishedAt&pageSize=3&apiKey=${API_KEY}`);
+        const breakRes = await fetch(`${BASE_URL}?q="breaking news"&lang=en&max=3&apikey=${API_KEY}`);
         const breakData = await breakRes.json();
         renderMainNews('breaking-news-container', breakData.articles);
 
         // 2. Politics
-        const polRes = await fetch(`${BASE_URL}?q=politics&sortBy=publishedAt&pageSize=3&apiKey=${API_KEY}`);
+        const polRes = await fetch(`${BASE_URL}?q=politics&lang=en&max=3&apikey=${API_KEY}`);
         const polData = await polRes.json();
         renderMainNews('politics-news-container', polData.articles);
 
         // 3. Accidents
-        const accRes = await fetch(`${BASE_URL}?q=accidents&sortBy=publishedAt&pageSize=3&apiKey=${API_KEY}`);
+        const accRes = await fetch(`${BASE_URL}?q=accidents&lang=en&max=3&apikey=${API_KEY}`);
         const accData = await accRes.json();
         renderMainNews('accidents-news-container', accData.articles);
 
         // 4. World News
-        const worldRes = await fetch(`${BASE_URL}?q=world&sortBy=publishedAt&pageSize=3&apiKey=${API_KEY}`);
+        const worldRes = await fetch(`${BASE_URL}?q=world&lang=en&max=3&apikey=${API_KEY}`);
         const worldData = await worldRes.json();
         renderMainNews('world-news-container', worldData.articles);
 
-        // Fetch Money News
-        const moneyRes = await fetch(`${BASE_URL}?q=money&sortBy=publishedAt&pageSize=4&apiKey=${API_KEY}`);
-        const moneyData = await moneyRes.json();
-        renderHorizontalWidget('money-news-list', moneyData.articles);
+        // Fetch Money Alerts (Exchange Rates)
+        fetchMoneyAlerts();
 
         // Fetch Matches/Sports News
-        const matchesRes = await fetch(`${BASE_URL}?q=match+OR+football+OR+sports&sortBy=publishedAt&pageSize=4&apiKey=${API_KEY}`);
+        const matchesRes = await fetch(`${BASE_URL}?q=match+OR+football+OR+sports&lang=en&max=4&apikey=${API_KEY}`);
         const matchesData = await matchesRes.json();
 
         if (matchesData && matchesData.articles) {
@@ -49,6 +56,76 @@ async function fetchNewsData() {
 
     } catch (error) {
         console.error("Error fetching news from API:", error);
+    }
+}
+
+async function fetchMoneyAlerts() {
+    const container = document.getElementById('money-news-list');
+    if (!container) return;
+
+    container.innerHTML = '<div class="text-center text-muted small">Loading rates...</div>';
+
+
+
+    try {
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+
+        if (data && data.rates && data.rates.EGP) {
+            let itemsHTML = '';
+            const flags = {
+                'AUD': '🇦🇺',
+                'GBP': '🇬🇧',
+                'EUR': '🇪🇺',
+                'CAD': '🇨🇦',
+                'USD': '🇺🇸'
+            };
+
+            const egpRateToUsd = data.rates.EGP; 
+
+            const targetSymbols = ['AUD', 'GBP', 'EUR', 'CAD', 'USD'];
+
+            targetSymbols.forEach(currency => {
+                const flag = flags[currency] || '💸';
+                const rateToUsd = data.rates[currency]; 
+
+                // Cross rate calculation: 1 Target Currency = (1 / rateToUsd) * egpRateToUsd EGP
+                // Math: 1 USD = rateToUsd currency = egpRateToUsd EGP
+                // So, rateToUsd currency = egpRateToUsd EGP
+                // Ergo, 1 currency = (egpRateToUsd / rateToUsd) EGP
+                const egpValue = (egpRateToUsd / rateToUsd).toFixed(2);
+
+                itemsHTML += `
+                    <div class="card mb-3 border-0 shadow-sm matches-widget-card" style="background-color: #fafafa; border-radius: 8px;">
+                        <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <span class="fs-3 me-3">${flag}</span>
+                                <span class="fw-bold fs-5">${currency}</span>
+                            </div>
+                            <div class="text-end">
+                                <span class="d-block text-muted small" style="font-size: 0.75rem;">1 ${currency} =</span>
+                                <span class="fw-bold text-success" style="font-size: 1.1rem;">${egpValue} EGP</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="scrolling-news-wrapper">
+                    ${itemsHTML}
+                    ${itemsHTML}
+                </div>
+            `;
+        } else {
+            container.innerHTML = '<div class="text-center text-muted">No currency data available.</div>';
+        }
+    } catch (error) {
+        console.error("Error fetching money alerts:", error);
+        container.innerHTML = '<div class="text-center text-danger small p-3">Error loading exchange rates. Please check your API Key and limits.</div>';
     }
 }
 
@@ -155,7 +232,7 @@ function renderMainNews(containerId, articles) {
 
     topArticles.forEach(article => {
         // Fallback image if urlToImage is missing
-        const image = article.urlToImage || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=600&h=400';
+        const image = article.image || article.urlToImage || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=600&h=400';
         const title = article.title || 'Breaking News';
         const excerpt = article.description ? (article.description.length > 100 ? article.description.substring(0, 100) + '...' : article.description) : 'Read more about this exciting update...';
 
@@ -190,7 +267,7 @@ function renderHorizontalWidget(containerId, articles) {
     let itemsHTML = '';
     topArticles.forEach(article => {
         const title = article.title || 'Sports Update';
-        const image = article.urlToImage || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&q=80&w=300&h=200';
+        const image = article.image || article.urlToImage || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&q=80&w=300&h=200';
         const sourceName = article.source?.name || "Sports News";
 
         itemsHTML += `
